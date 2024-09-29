@@ -1,0 +1,54 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+    int data;
+    int row;
+    int col;
+    struct Node*next;
+};
+
+void create(struct Node**head,int val){
+    
+    struct Node* newnode=(struct Node*)malloc(sizeof(struct Node));
+    struct Node* r=(struct Node*)malloc(sizeof(struct Node));
+    struct Node*ptr=*head;
+    newnode->data=val;
+    newnode->next=NULL;
+    newnode->prev=NULL;
+    if(*head==NULL){
+        *head=newnode;
+        ptr=newnode;
+    }
+    else{
+        struct Node*ptr=*head;
+        while(ptr->next!=NULL){
+            ptr=ptr->next;
+        }
+        ptr->next=newnode;
+        newnode->next=NULL;
+        return head;
+        
+    }
+}
+
+void sparse2tuple(struct Node*head){
+    struct Node*ptr=head;
+    struct Node*r=(struct Node*)malloc(sizeof(struct Node));
+    int count=0;
+    while(ptr!=NULL){
+        if(p->data!=NULL){
+            r->row=p->row;
+            r->col=p->col;
+            r->data=p->data;
+            r=r->next;
+            count++;
+        }
+        ptr=ptr->next;
+    }
+}
+
+int main(){
+
+
+}
