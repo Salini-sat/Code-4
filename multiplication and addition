@@ -1,0 +1,116 @@
+#include <stdio.h>
+
+#define MAX 100 
+
+typedef struct {
+    int row;
+    int col;
+    int value;
+} SparseMatrix;
+
+void addSparseMatrices(SparseMatrix a[], SparseMatrix b[], SparseMatrix result[]) {
+    int i = 1, j = 1, k = 1;
+    if (a[0].row != b[0].row || a[0].col != b[0].col) {
+        printf("Matrices cannot be added.\n");
+        return;
+    }
+
+    result[0].row = a[0].row;
+    result[0].col = a[0].col;
+
+    while (i <= a[0].value && j <= b[0].value) {
+        if (a[i].row < b[j].row || (a[i].row == b[j].row && a[i].col < b[j].col)) {
+            result[k++] = a[i++];
+        } else if (a[i].row > b[j].row || (a[i].row == b[j].row && a[i].col > b[j].col)) {
+            result[k++] = b[j++];
+        } else {
+            result[k] = a[i];
+            result[k++].value = a[i++].value + b[j++].value;
+        }
+    }
+
+    while (i <= a[0].value) result[k++] = a[i++];
+    while (j <= b[0].value) result[k++] = b[j++];
+
+    result[0].value = k - 1;
+}
+
+void multiplySparseMatrices(SparseMatrix a[], SparseMatrix b[], SparseMatrix result[]) {
+    if (a[0].col != b[0].row) {
+        printf("Matrices cannot be multiplied.\n");
+        return;
+    }
+
+    result[0].row = a[0].row;
+    result[0].col = b[0].col;
+    result[0].value = 0;
+
+    int temp[MAX] = {0};  
+
+    for (int i = 1; i <= a[0].value; i++) {
+        for (int j = 1; j <= b[0].value; j++) {
+            if (a[i].col == b[j].row) {
+                int row = a[i].row;
+                int col = b[j].col;
+                int value = a[i].value * b[j].value;
+                if (value != 0) {
+                    int found = 0;
+                    for (int x = 1; x <= result[0].value; x++) {
+                        if (result[x].row == row && result[x].col == col) {
+                            result[x].value += value;
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result[++result[0].value].row = row;
+                        result[result[0].value].col = col;
+                        result[result[0].value].value = value;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void readSparseMatrix(SparseMatrix a[]) {
+    int rows, cols, nonZero;
+    printf("Enter the number of rows, columns, and non-zero elements: ");
+    scanf("%d %d %d", &rows, &cols, &nonZero);
+
+    a[0].row = rows;
+    a[0].col = cols;
+    a[0].value = nonZero;
+
+    for (int i = 1; i <= nonZero; i++) {
+        printf("Enter row, column, and value: ");
+        scanf("%d %d %d", &a[i].row, &a[i].col, &a[i].value);
+    }
+}
+
+void printSparseMatrix(SparseMatrix a[]) {
+    printf("Sparse Matrix (Row, Column, Value):\n");
+    for (int i = 0; i <= a[0].value; i++) {
+        printf("%d %d %d\n", a[i].row, a[i].col, a[i].value);
+    }
+}
+
+int main() {
+    SparseMatrix a[MAX], b[MAX], result[MAX];
+
+    printf("Enter the first sparse matrix:\n");
+    readSparseMatrix(a);
+
+    printf("Enter the second sparse matrix:\n");
+    readSparseMatrix(b);
+
+    printf("\nAddition of the two sparse matrices:\n");
+    addSparseMatrices(a, b, result);
+    printSparseMatrix(result);
+
+    printf("\nMultiplication of the two sparse matrices:\n");
+    multiplySparseMatrices(a, b, result);
+    printSparseMatrix(result);
+
+    return 0;
+}
